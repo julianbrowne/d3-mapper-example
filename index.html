@@ -46,6 +46,7 @@
                     .attr("r", '20')
                     .attr("class", "node")
                     .style("cursor", "pointer")
+                    .on('click', killEvent)
                     .on('contextmenu', startEndPath)
                     .call(drag)
                 .append("svg:title")
