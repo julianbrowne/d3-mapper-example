@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<head>
+    <meta charset="utf-8">
+    <title>Shortest Path</title>
+    <link type="text/css" href="style.css" rel="stylesheet" />
+    <script type="text/javascript" src="d3.v3.min.js"></script>
+</head>
+<body>
+    <h1>Dijkstra's Shortest Path</h1>
+    <div id="graph"></div>
+    <div id="nodes"></div>
+    <div id="paths"></div>
+    <script>
+        var graph = d3.select('#graph');
+        var nodes = [];
+        var paths = [];
+        var fromNode = null;
+
+        var svg = graph.append("svg:svg")
+            .attr("width", 1000)
+            .attr("height", 800)
+            .on('contextmenu', function() { 
+                fromNode = null;
+                d3.event.preventDefault();
+                d3.event.stopPropagation();
+            })
+            .on("click", drawNode);
+
+        var drag = d3.behavior
+            .drag()
+                .on("drag", dragNode);
+
+        function drawNode() { 
+            killEvent();
+            //if (d3.event.defaultPrevented) return;
+            var position = d3.mouse(this);
+            var nodeData = {name: nodes.length.toString(), x: parseInt(position[0]), y: parseInt(position[1]) };
+            nodes.push(nodeData);
+
+            svg.selectAll("circle")
+              .data(nodes)
+              .enter()
+                .append("circle")
+                    .attr("nodeId", function(d,i) {return i })
+                    .attr("transform", "translate(" + nodeData.x + "," + nodeData.y + ")")
+                    .attr("r", '20')
+                    .attr("class", "node")
+                    .style("cursor", "pointer")
+                    .on('contextmenu', startEndPath)
+                    .call(drag)
+                .append("svg:title")
+                    .text(nodeData.name);
+
+            d3.select("#nodes").html(JSON.stringify(nodes));
+        };
+
+        function dragNode() { 
+            var x = parseInt(d3.event.x);
+            var y = parseInt(d3.event.y);
+            var node = d3.select(this);
+            node.attr("transform", "translate(" + x + "," + y + ")");
+            var nodePosition = d3.transform(node.attr("transform")).translate;
+            var nodeDatum = { 
+                name: node.datum().name, 
+                x: parseInt(nodePosition[0]), 
+                y: parseInt(nodePosition[1])
+            };
+            node.datum(nodeDatum);
+            nodes.forEach(function(n,i) { 
+                if(n.name === nodeDatum.name) {
+                    nodes[i] = nodeDatum;
+                }
+            });
+            d3.select("#nodes").html(JSON.stringify(svg.selectAll("circle").data()));
+            drawLines();
+        };
+
+        function drawLines() { 
+
+            svg.selectAll("line").data([]).exit().remove();
+
+            var lines = svg.selectAll("line")
+                .data(paths);
+
+            lines.enter()
+                .append("line")
+                    .attr("x1", function(d) { return nodes[d.from].x; })
+                    .attr("y1", function(d) { return nodes[d.from].y; })
+                    .attr("x2", function(d) { return nodes[d.to].x;   })
+                    .attr("y2", function(d) { return nodes[d.to].y;   })
+                    .on('click', killEvent)
+                    .on('contextmenu', killEvent);
+
+            lines.exit()
+                    .remove();
+
+            d3.select("#paths").html(JSON.stringify(svg.selectAll("line").data()));
+        };
+
+        function killEvent() { 
+            d3.event.preventDefault();
+            d3.event.stopPropagation();
+        };
+
+        function startEndPath() { 
+            killEvent();
+            if(fromNode===null) { 
+                fromNode = this;
+            }
+            else { 
+                if(this===fromNode) return;
+                toNode = this;
+                //var fromPosition = d3.transform(fromNode.attr("transform")).translate;
+                //var toPosition = d3.transform(toNode.attr("transform")).translate;
+                var pathDatum = { 
+                    from: d3.select(fromNode).attr('nodeId'), 
+                    to: d3.select(toNode).attr('nodeId')
+                };
+                paths.push(pathDatum);
+                drawLines();
+                fromNode = null;
+            }
+            
+        };
+
+</script>
+</body>
+</html>
