@@ -1,7 +1,7 @@
 
 ## Installation
 
-- Download all file into a directory
+- Download all files into a directory
 - Optionally replace the map.png background image
 - Open index.html in a modern browser
 
