@@ -5,7 +5,9 @@ svg {
 
 #graph { 
 	margin: 50px;
+	width: 1000px;
 	background-image: url("map.png");
+	overflow: hidden;
 }
 
 line { 
