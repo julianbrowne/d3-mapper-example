@@ -52,7 +52,7 @@
                 .append("svg:title")
                     .text(nodeData.name);
 
-            d3.select("#nodes").html(JSON.stringify(nodes));
+                updateNodesText();
         };
 
         function dragNode() { 
@@ -72,8 +72,14 @@
                     nodes[i] = nodeDatum;
                 }
             });
-            d3.select("#nodes").html(JSON.stringify(svg.selectAll("circle").data()));
+            updateNodesText();
             drawLines();
+        };
+
+        function updateNodesText() { 
+            d3.select("#nodes").html( 
+                "var nodes = " + JSON.stringify(svg.selectAll("circle").data()) + ";"
+            );
         };
 
         function drawLines() { 
@@ -95,7 +101,10 @@
             lines.exit()
                     .remove();
 
-            d3.select("#paths").html(JSON.stringify(svg.selectAll("line").data()));
+            d3.select("#paths").html( 
+                "var paths = " + JSON.stringify(svg.selectAll("line").data()) + ";"
+            );
+
         };
 
         function killEvent() { 
