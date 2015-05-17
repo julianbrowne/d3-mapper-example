@@ -13,6 +13,10 @@
 - right click elsewhere on the map to cancel a connection in-progress (i.e before the second node has been right-clicked)
 
 Once complete the bottom of the screen contains suitable input data (nodes and paths)
-for input into a shortest path algorithm.
+for input into the shortest path routing algorithm:
+
+https://github.com/julianbrowne/shortest-path-d3-router-example
+
+(replace 'data.js' file with generated code)
 
 ![screenshot](screenshot.jpg)
